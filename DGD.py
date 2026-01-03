@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frans Oefenen - Woordenschat</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        select, input, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #0056b3; }
+        .feedback { margin: 10px 0; font-weight: bold; }
+        .score { margin-top: 20px; font-size: 0.9em; color: #555; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Frans Oefenen</h1>
+    
+    <label for="thema-select">Kies een thema:</label>
+    <select id="thema-select" onchange="resetOefening()">
+        <option value="8">La mobilité et le mouvement</option>
+        <option value="9">L'art</option>
+        <option value="10">Voyage en France</option>
+    </select>
+
+    <div id="oefen-sectie">
+        <p id="vraag-zin">Selecteer een thema om te beginnen</p>
+        <input type="text" id="gebruikers-input" placeholder="Vertaal naar het Frans..." autocomplete="off">
+        <button onclick="controleerAntwoord()">Controleer</button>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <div class="score">
+        Goed: <span id="score-goed">0</span> | Fout: <span id="score-fout">0</span>
+    </div>
+</div>
+
+<script>
+const woordenLijst = [
+    // --- LA MOBILITÉ ET LE MOUVEMENT (t:8) ---
+    {t:8, nl:"zich verplaatsen", fr:"se déplacer"},
+    {t:8, nl:"de verplaatsing", fr:"le deplacement"},
+    {t:8, nl:"rondrijden", fr:"circuler"},
+    {t:8, nl:"het (drukke) verkeer", fr:"la circulation / le trafic (dense)"},
+    {t:8, nl:"gaan naar", fr:"se rendre à / aller à"},
+    {t:8, nl:"terugkeren (naar)", fr:"retourner (à)"},
+    {t:8, nl:"pendelen", fr:"faire la navette"},
+    {t:8, nl:"zijn vervoermiddel kiezen", fr:"choisir son mode de transport"},
+    {t:8, nl:"de zachte / verantwoordelijke mobiliteit", fr:"la mobility douce / responsable"},
+    {t:8, nl:"stappen / de wandeling", fr:"la marche à pied"},
+    {t:8, nl:"een voetganger", fr:"un piéton"},
+    {t:8, nl:"een voetgangerszone / -straat", fr:"une zone / rue piétonne"},
+    {t:8, nl:"het trottoir / het voetpad", fr:"le trottoir"},
+    {t:8, nl:"rechtsomkeer maken", fr:"faire demi-tour"},
+    {t:8, nl:"de straat oversteken", fr:"traverser la rue"},
+    {t:8, nl:"het zebrapad", fr:"le passage piéton"},
+    {t:8, nl:"trappen (op de fiets)", fr:"pédaler"},
+    {t:8, nl:"een fietser", fr:"un cycliste"},
+    {t:8, nl:"een fietspad", fr:"une piste cyclable"},
+    {t:8, nl:"een fietsenstalling", fr:"un parking à vélos / un abri vélo"},
+    {t:8, nl:"de helm", fr:"le casque"},
+    {t:8, nl:"het stuur (fiets)", fr:"le guidon"},
+    {t:8, nl:"het fietsslot", fr:"l'antivol (m.)"},
+    {t:8, nl:"de gebruiker", fr:"l'usager (m.)"},
+    {t:8, nl:"de passagier", fr:"le passager"},
+    {t:8, nl:"het openbaar vervoer", fr:"les transports en commun"},
+    {t:8, nl:"instappen / opstappen", fr:"monter (dans)"},
+    {t:8, nl:"uitstappen", fr:"descendre (de)"},
+    {t:8, nl:"een halte", fr:"un arrêt"},
+    {t:8, nl:"het perron", fr:"le quai"},
+    {t:8, nl:"een abonnement", fr:"un abonnement"},
+    {t:8, nl:"een vervoerbewijs / ticket", fr:"un titre de transport / un ticket"},
+    {t:8, nl:"het rijbewijs", fr:"le permis (de conduire)"},
+    {t:8, nl:"een wagen / auto", fr:"une voiture / une bagnole (pop.)"},
+    {t:8, nl:"een automobilist", fr:"un automobiliste"},
+    {t:8, nl:"carpoolen / autodelen", fr:"faire du covoiturage"},
+    {t:8, nl:"een elektrische wagen", fr:"une voiture électrique"},
+    {t:8, nl:"een laadpaal", fr:"une borne de recharge"},
+    {t:8, nl:"de spitsuren", fr:"les heures de pointe"},
+    {t:8, nl:"een file / opstopping", fr:"un embouteillage / un bouchon"},
+    {t:8, nl:"de wegwerkzaamheden", fr:"les travaux (m.)"},
+    {t:8, nl:"de omleiding", fr:"la déviation"},
+    {t:8, nl:"een auto-ongeluk", fr:"un accident de voiture"},
+    {t:8, nl:"het dak", fr:"le toit"},
+    {t:8, nl:"de koffer", fr:"le coffre"},
+    {t:8, nl:"het stuur (auto)", fr:"le volant"},
+    {t:8, nl:"de band", fr:"le pneu"},
+    {t:8, nl:"het portier", fr:"la portière"},
+    {t:8, nl:"de lekke band", fr:"le pneu crevé"},
+    {t:8, nl:"de koplamp", fr:"le phare"},
+    {t:8, nl:"de voorruit", fr:"le pare-brise"},
+    {t:8, nl:"de achteruitkijkspiegel", fr:"le rétroviseur"},
+    {t:8, nl:"de richtingaanwijzer / pinker", fr:"le (feu) clignotant"},
+    {t:8, nl:"de elektrische step", fr:"la trottinette électrique"},
+    {t:8, nl:"steppen", fr:"trottiner"},
+    {t:8, nl:"de elektrische fiets", fr:"le vélo électrique"},
+    {t:8, nl:"het hoverboard", fr:"l'hoverboard (m.)"},
+    {t:8, nl:"de segway", fr:"le gyropode"},
+    {t:8, nl:"het eenwielig elektrisch voertuig", fr:"la gyroroue"},
+
+    // --- L'ART (t:9) ---
+    {t:9, nl:"de kunst", fr:"l'art (m.)"},
+    {t:9, nl:"een kunstwerk", fr:"une œuvre d'art"},
+    {t:9, nl:"een meesterwerk", fr:"un chef-d'œuvre"},
+    {t:9, nl:"creëren - een creatie, ontwerp", fr:"créer - une création"},
+    {t:9, nl:"de creativiteit - creatief zijn", fr:"la créativité - être creatif"},
+    {t:9, nl:"een kunstenaar - artistiek", fr:"un(e) artiste - artistique"},
+    {t:9, nl:"een tentoonstelling", fr:"une expo(sition)"},
+    {t:9, nl:"tentoonstellen - tentoongesteld worden", fr:"exposer - être exposé"},
+    {t:9, nl:"een museum / kunstgalerij bezoeken", fr:"visiter un musée / une galerie d'art"},
+    {t:9, nl:"een schilder - schilderen", fr:"un(e) peintre - peindre"},
+    {t:9, nl:"een schilderij / een doek", fr:"un tableau / une peinture / une toile"},
+    {t:9, nl:"een stilleven", fr:"une nature morte"},
+    {t:9, nl:"een landschap", fr:"un paysage"},
+    {t:9, nl:"een portret", fr:"un portrait"},
+    {t:9, nl:"een schets - schetsen", fr:"un croquis / une esquisse - croquer / esquisser"},
+    {t:9, nl:"een penseel / een borstel", fr:"un pinceau"},
+    {t:9, nl:"een kader / inlijsten", fr:"un cadre / encadrer"},
+    {t:9, nl:"een beeldhouwer - een beeldhouwwerk", fr:"un sculpteur - une sculpture"},
+    {t:9, nl:"een standbeeld", fr:"une statue"},
+    {t:9, nl:"de architectuur - een architect", fr:"l'architecture - un(e) architecte"},
+    {t:9, nl:"een gebouw / een bouwwerk", fr:"un bâtiment / un édifice"},
+    {t:9, nl:"de grafische kunst / design", fr:"l'art graphique / le design"},
+    {t:9, nl:"de fotografie - een fotograaf", fr:"la photographie - un(e) photographe"},
+    {t:9, nl:"een foto", fr:"une photo / un cliché"},
+    {t:9, nl:"de straatkunst / urban art", fr:"l'art de rue / l'art urbain"},
+    {t:9, nl:"een muurschildering", fr:"une fresque (murale)"},
+    {t:9, nl:"een stripverhaal", fr:"une bande dessinée (une BD)"},
+    {t:9, nl:"een film - een filmmaker", fr:"un film - un cinéaste"},
+    {t:9, nl:"een regisseur - de regie", fr:"un réalisateur - la réalisation"},
+    {t:9, nl:"de trailer", fr:"la bande-annonce"},
+    {t:9, nl:"een scenario", fr:"un scénario"},
+    {t:9, nl:"de special effects", fr:"les effets spéciaux"},
+    {t:9, nl:"de ondertiteling - ondertiteld", fr:"le sous-titrage - sous-titré"},
+    {t:9, nl:"dubben - nagesynchroniseerd", fr:"doubler - doublé (en V.F.)"},
+    {t:9, nl:"de originele versie", fr:"la version originale (V.O.)"},
+    {t:9, nl:"een acteur / actrice", fr:"un acteur / une actrice"},
+    {t:9, nl:"een rol spelen", fr:"jouer un rôle"},
+    {t:9, nl:"het toneelstuk", fr:"la pièce de théâtre"},
+    {t:9, nl:"het podium / de scène", fr:"la scène"},
+    {t:9, nl:"het publiek", fr:"le public"},
+    {t:9, nl:"het applaus - applaudisseren", fr:"les applaudissements - applaudir"},
+    {t:9, nl:"ik hou van / ik ben dol op", fr:"j'aime / j'adore"},
+    {t:9, nl:"dat interesseert mij", fr:"ça m'intéresse"},
+    {t:9, nl:"ik vind dat prachtig", fr:"je trouve ça magnifique"},
+    {t:9, nl:"bewonderenswaardig", fr:"admirable"},
+    {t:9, nl:"indrukwekkend", fr:"impressionnant"},
+    {t:9, nl:"ontroerend", fr:"émouvant"},
+    {t:9, nl:"fascinerend", fr:"fascinant"},
+    {t:9, nl:"verrassend", fr:"surprenant"},
+    {t:9, nl:"kleurrijk", fr:"coloré"},
+    {t:9, nl:"licht / helder", fr:"lumineux"},
+    {t:9, nl:"mysterie", fr:"mystère"},
+    {t:9, nl:"het is een meesterwerk", fr:"c'est un chef-d'œuvre"},
+    {t:9, nl:"dat bevalt me wel", fr:"ça me plaît bien"},
+    {t:9, nl:"het is echt mooi (populair)", fr:"c'est canon"},
+    {t:9, nl:"het is onvergetelijk", fr:"c'est inoubliable"},
+    {t:9, nl:"het is origineel", fr:"c'est original"},
+    {t:9, nl:"het is uniek", fr:"c'est unique"},
+    {t:9, nl:"dat interesseert mij niet", fr:"ça ne m'intéresse pas"},
+    {t:9, nl:"daar ken ik niets van", fr:"je ne m'y connais pas"},
+    {t:9, nl:"ik begrijp het niet", fr:"je ne comprends pas"},
+    {t:9, nl:"dat spreekt me niet aan", fr:"ça ne me parle pas"},
+    {t:9, nl:"het is niet mijn ding", fr:"ce n'est pas mon truc"},
+    {t:9, nl:"dat zegt me (nog) niets", fr:"ça ne me dit (encore) rien"},
+    {t:9, nl:"het is compleet nutteloos", fr:"c'est complètement inutile"},
+    {t:9, nl:"het is overschat", fr:"c'est surcoté / surestimé"},
+    {t:9, nl:"het is te intellectueel", fr:"c'est trop intellectuel"},
+    {t:9, nl:"het is ouderwets", fr:"c'est un truc de vieux"},
+    {t:9, nl:"het is ouderwets (populair)", fr:"c'est ringard"},
+    {t:9, nl:"maakt me bang", fr:"me fait peur"},
+    {t:9, nl:"maakt me droevig", fr:"me rend triste"},
+    {t:9, nl:"laat me perplex", fr:"me laisse perplexe"},
+    {t:9, nl:"doet me geeuwen", fr:"me fait bâiller"},
+    {t:9, nl:"de droefheid", fr:"la tristesse"},
+    {t:9, nl:"de eenzaamheid", fr:"la solitude"},
+    {t:9, nl:"de eenzaamheid", fr:"la solitude"},
+    {t:9, nl:"de depressie", fr:"la déprime"},
+    {t:9, nl:"de afkeer", fr:"le dégoût"},
+    {t:9, nl:"de verveling", fr:"l'ennui (m.)"},
+    {t:9, nl:"de angst", fr:"la peur"},
+    {t:9, nl:"lelijk (populair)", fr:"moche"},
+    {t:9, nl:"ik kan het niet waarderen", fr:"je n'arrive pas à l'apprécier"},
+    {t:9, nl:"het is vreselijk", fr:"c'est affreux"},
+    {t:9, nl:"het is kitch", fr:"c'est kitch"},
+    {t:9, nl:"het is vulgair", fr:"c'est vulgaire"},
+
+    // --- VOYAGE EN FRANCE (t:10) ---
+    {t:10, nl:"de zeshoek = Frankrijk", fr:"l'Hexagone (m.)"},
+    {t:10, nl:"de streek", fr:"la région"},
+    {t:10, nl:"het departement (administratief)", fr:"le département"},
+    {t:10, nl:"de stad - het platteland", fr:"la ville - la campagne"},
+    {t:10, nl:"het dorp", fr:"le village"},
+    {t:10, nl:"de grens", fr:"la frontière"},
+    {t:10, nl:"de toerist - de bezoeker - het bezoek", fr:"le / la touriste - le visiteur - la visite"},
+    {t:10, nl:"de promotie van een regio", fr:"la promotion d'une regio"},
+    {t:10, nl:"het bureau voor toerisme", fr:"l'office (m.) du tourisme"},
+    {t:10, nl:"zich informeren", fr:"se renseigner"},
+    {t:10, nl:"een verblijf organiseren", fr:"organiser un séjour (à l'étranger)"},
+    {t:10, nl:"een georganiseerde reis", fr:"un voyage organisé"},
+    {t:10, nl:"een road trip", fr:"un road trip"},
+    {t:10, nl:"een route, traject", fr:"un itinéraire"},
+    {t:10, nl:"een rondreis", fr:"un circuit"},
+    {t:10, nl:"een reservatie maken / reserveren", fr:"faire une réservation / réserver"},
+    {t:10, nl:"een verhuurbedrijf", fr:"une agence de location"},
+    {t:10, nl:"een bestemming kiezen", fr:"choisir une destination"},
+    {t:10, nl:"de accommodatie", fr:"l'hébergement (m.)"},
+    {t:10, nl:"de gastronomie, het eten", fr:"la gastronomie"},
+    {t:10, nl:"de lokale specialiteiten", fr:"les spécialités (f.) locales"},
+    {t:10, nl:"de restaurants en de bars / cafés", fr:"les restaurants (m.) et les bars (m.)"},
+    {t:10, nl:"een cruise maken", fr:"faire une cruise"},
+    {t:10, nl:"de toeristische site", fr:"le site touristique"},
+    {t:10, nl:"het museum - de tentoonstelling", fr:"le museum - l'exposition (f.)"},
+    {t:10, nl:"het historisch monument", fr:"le monument historique"},
+    {t:10, nl:"het kasteel", fr:"le château"},
+    {t:10, nl:"de wijngaard", fr:"le vignoble"},
+    {t:10, nl:"het culturele erfgoed", fr:"le patrimoine culturel"},
+    {t:10, nl:"beroemd - prestigieus - bekend", fr:"célèbre - prestigieux - connu"},
+    {t:10, nl:"de trekpleister", fr:"le pôle d'attraction"},
+    {t:10, nl:"het (zachte - vochtige - aangename) klimaat", fr:"le climat (doux - humide - agréable)"},
+    {t:10, nl:"de (blauwe, bewolkte, overdekte) lucht", fr:"le ciel (bleu, nuageux, couvert)"},
+    {t:10, nl:"de zon - zonnig", fr:"le soleil - ensoleillé"},
+    {t:10, nl:"de wolk", fr:"le nuage"},
+    {t:10, nl:"de wind", fr:"le vent"},
+    {t:10, nl:"de regen - een regenbui", fr:"la pluie - une averse"},
+    {t:10, nl:"de opklaringen", fr:"les éclaircies (f.)"},
+    {t:10, nl:"de sneeuw", fr:"la neige"},
+    {t:10, nl:"(heel) dicht bij - in de buurt van", fr:"(tout) près de - aux environs de"},
+    {t:10, nl:"in de omgeving van", fr:"dans les alentours de"},
+    {t:10, nl:"(niet) ver van", fr:"(non) loin de"},
+    {t:10, nl:"naast", fr:"à côté de"},
+    {t:10, nl:"achter", fr:"derrière"},
+    {t:10, nl:"voor", fr:"devant"},
+    {t:10, nl:"aan de kant van", fr:"du côté de"},
+    {t:10, nl:"in de richting van", fr:"en direction de"},
+    {t:10, nl:"tegenover", fr:"en face de"},
+    {t:10, nl:"ten noorden van - in het noorden van", fr:"au nord de - dans le nord de"},
+    {t:10, nl:"ten zuiden van - in het zuiden van", fr:"au sud de - dans le sud de"},
+    {t:10, nl:"ten westen van - in het westen van", fr:"à l'ouest de - dans l'ouest de"},
+    {t:10, nl:"ten oosten van - in het oosten van", fr:"à l'est de - dans l'est de"},
+    {t:10, nl:"het landschap - het zicht", fr:"le paysage - la vue"},
+    {t:10, nl:"zich uitstrekken zo ver als het oog kan zien", fr:"s'étendre à perte de vue"},
+    {t:10, nl:"de plantengroei", fr:"la végétation"},
+    {t:10, nl:"bomen", fr:"des arbres"},
+    {t:10, nl:"bossen", fr:"des forêts"},
+    {t:10, nl:"pijnbomen", fr:"des pins"},
+    {t:10, nl:"de heide", fr:"la lande"},
+    {t:10, nl:"een vallei", fr:"une vallée"},
+    {t:10, nl:"een heuvel", fr:"une colline"},
+    {t:10, nl:"een berg", fr:"une montagne"},
+    {t:10, nl:"een meer", fr:"un lac"},
+    {t:10, nl:"een rivier", fr:"une rivière"},
+    {t:10, nl:"een stroom (uitmondend in zee)", fr:"un fleuve"},
+    {t:10, nl:"de zee", fr:"la mer"},
+    {t:10, nl:"de oceaan", fr:"l'océan"},
+    {t:10, nl:"de golf", fr:"la vague"},
+    {t:10, nl:"de baai", fr:"la baie"},
+    {t:10, nl:"de kust", fr:"la côte / le littoral"},
+    {t:10, nl:"het strand", fr:"la plage"},
+    {t:10, nl:"de klif, rotswand", fr:"la falaise"},
+    {t:10, nl:"pittoresk, schilderachtig", fr:"pittoresque"},
+    {t:10, nl:"stedelijk", fr:"urbain"},
+    {t:10, nl:"landelijk", fr:"rural"},
+    {t:10, nl:"kleurrijk", fr:"coloré"},
+    {t:10, nl:"heuvelachtig", fr:"vallonné"}
+];
+
+let huidigeVraag = null;
+let scoreGoed = 0;
+let scoreFout = 0;
+
+function resetOefening() {
+    scoreGoed = 0;
+    scoreFout = 0;
+    updateScore();
+    volgendeVraag();
+}
+
+function volgendeVraag() {
+    const geselecteerdThema = parseInt(document.getElementById('thema-select').value);
+    const filterLijst = woordenLijst.filter(w => w.t === geselecteerdThema);
+    
+    if (filterLijst.length === 0) return;
+    
+    huidigeVraag = filterLijst[Math.floor(Math.random() * filterLijst.length)];
+    document.getElementById('vraag-zin').innerText = `Vertaal: ${huidigeVraag.nl}`;
+    document.getElementById('gebruikers-input').value = "";
+    document.getElementById('feedback').innerText = "";
+    document.getElementById('gebruikers-input').focus();
+}
+
+function controleerAntwoord() {
+    const input = document.getElementById('gebruikers-input').value.trim().toLowerCase();
+    const correctAntwoord = huidigeVraag.fr.toLowerCase();
+    const feedbackEl = document.getElementById('feedback');
+
+    // Simpele check (je kunt dit uitbreiden voor synoniemen met '/')
+    if (input === correctAntwoord || correctAntwoord.split('/').some(s => s.trim() === input)) {
+        feedbackEl.innerText = "Correct! 🎉";
+        feedbackEl.style.color = "green";
+        scoreGoed++;
+        setTimeout(volgendeVraag, 1000);
+    } else {
+        feedbackEl.innerText = `Helaas! Het juiste antwoord was: ${huidigeVraag.fr}`;
+        feedbackEl.style.color = "red";
+        scoreFout++;
+    }
+    updateScore();
+}
+
+function updateScore() {
+    document.getElementById('score-goed').innerText = scoreGoed;
+    document.getElementById('score-fout').innerText = scoreFout;
+}
+
+// Enter toets ondersteuning
+document.getElementById('gebruikers-input').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+        controleerAntwoord();
+    }
+});
+
+// Start de eerste vraag
+volgendeVraag();
+</script>
+
+</body>
+</html>
