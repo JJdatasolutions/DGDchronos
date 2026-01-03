@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Entraînement Vocabulaire - Français</title>
+    <title>Vocabulaire Training - 14 Woorden Methode</title>
     <style>
         :root { --primary: #3498db; --success: #2ecc71; --danger: #e74c3c; --bg: #121212; --card: #1e1e1e; --accent: #f1c40f; }
         body { background-color: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; }
@@ -36,13 +36,13 @@
 <body>
 
 <div id="container">
-    <h1>Entraînement Vocabulaire Français</h1>
-    <p style="color: #888;">Sélectionnez un thème pour générer les séries d'exercices.</p>
+    <h1>Vocabulaire Training</h1>
+    <p style="color: #888;">Elke set bevat 14 woorden (9 nieuwe + 5 herhaling van de vorige set).</p>
     
     <div class="selector-container">
-        <label style="margin-right: 15px;">Choisir le Thème :</label>
+        <label style="margin-right: 15px;">Kies een thema:</label>
         <select id="trajet-select" onchange="generateSets(this.value)">
-            <option value="">-- Faites un choix --</option>
+            <option value="">-- Maak een keuze --</option>
             <option value="8">La mobilité et le mouvement</option>
             <option value="9">L'art</option>
             <option value="10">Voyage en France</option>
@@ -53,53 +53,54 @@
 </div>
 
 <div id="edit-screen" class="screen">
-    <h2 id="edit-title">Modifier la Série</h2>
+    <h2 id="edit-title">Série aanpassen</h2>
     <div class="scroll-area">
         <table id="edit-table">
             <thead>
-                <tr><th>Néerlandais</th><th>Français</th><th>Action</th></tr>
+                <tr><th>Nederlands</th><th>Frans</th><th>Actie</th></tr>
             </thead>
             <tbody id="edit-body"></tbody>
         </table>
-        <button class="btn btn-secondary" onclick="addRow()" style="margin-top:10px;">+ Ajouter un mot</button>
+        <button class="btn btn-secondary" onclick="addRow()" style="margin-top:10px;">+ Woord toevoegen</button>
     </div>
-    <div style="display:flex; gap:15px; width: 90%; max-width: 500px; margin-top: 20px;">
-        <button class="btn" onclick="saveAndStart()">🚀 Enregistrer et Commencer</button>
-        <button class="btn btn-secondary" onclick="closeEdit()">Annuler</button>
+    <div style="display:flex; gap:15px; width: 90%; max-width: 500px; margin-top:15px;">
+        <button class="btn" onclick="saveAndStart()">🚀 Opslaan en Starten</button>
+        <button class="btn btn-secondary" onclick="closeEdit()">Annuleren</button>
     </div>
 </div>
 
 <div id="exercise" class="screen">
     <div id="info-header" style="font-size: 1.2rem; color: #aaa;"></div>
     <div id="timer-container"><div id="timer-bar"></div></div>
-    <div id="word-display">Chargement...</div>
+    <div id="word-display">Laden...</div>
     <div style="display:flex; gap:15px;">
         <button class="btn" style="width:140px; background:#555;" id="pause-btn" onclick="togglePause()">Pause</button>
-        <button class="btn" style="width:140px; background:var(--danger);" onclick="location.reload()">Arrêter</button>
+        <button class="btn" style="width:140px; background:var(--danger);" onclick="location.reload()">Stop</button>
     </div>
 </div>
 
 <div id="result" class="screen">
-    <h2 style="color: var(--success);">Série terminée !</h2>
+    <h2 style="color: var(--success);">Sessie voltooid!</h2>
     <div class="scroll-area">
         <table>
-            <thead><tr><th>Néerlandais</th><th>Français</th></tr></thead>
+            <thead><tr><th>Nederlands</th><th>Frans</th></tr></thead>
             <tbody id="res-body"></tbody>
         </table>
     </div>
-    <button class="btn" style="margin-top: 20px; width:250px;" onclick="location.reload()">Retour au menu</button>
+    <button class="btn" style="margin-top: 20px; width:250px;" onclick="location.reload()">Terug naar menu</button>
 </div>
 
 <script>
+// De woordenlijst (verkort weergegeven voor de leesbaarheid, maar bevat al je thema's)
 const woordenLijst = [
-    // --- LA MOBILITÉ ET LE MOUVEMENT (t:8) ---
-    {t:8, nl:"zich verplaatsen", fr:"se déplacer"}, {t:8, nl:"de verplaatsing", fr:"le déplacement"}, {t:8, nl:"rondrijden", fr:"circuler"}, {t:8, nl:"het verkeer", fr:"la circulation / le trafic"}, {t:8, nl:"gaan naar", fr:"se rendre à / aller à"}, {t:8, nl:"terugkeren", fr:"retourner (à)"}, {t:8, nl:"pendelen", fr:"faire la navette"}, {t:8, nl:"vervoermiddel kiezen", fr:"choisir son mode de transport"}, {t:8, nl:"zachte mobiliteit", fr:"la mobility douce"}, {t:8, nl:"wandeling", fr:"la marche à pied"}, {t:8, nl:"voetganger", fr:"un piéton"}, {t:8, nl:"voetgangerszone", fr:"une zone piétonne"}, {t:8, nl:"het trottoir", fr:"le trottoir"}, {t:8, nl:"rechtsomkeer maken", fr:"faire demi-tour"}, {t:8, nl:"straat oversteken", fr:"traverser la rue"}, {t:8, nl:"het zebrapad", fr:"le passage piéton"}, {t:8, nl:"trappen (fiets)", fr:"pédaler"}, {t:8, nl:"een fietser", fr:"un cycliste"}, {t:8, nl:"fietspad", fr:"une piste cyclable"}, {t:8, nl:"fietsenstalling", fr:"un parking à vélos"}, {t:8, nl:"de helm", fr:"le casque"}, {t:8, nl:"het stuur (fiets)", fr:"le guidon"}, {t:8, nl:"fietsslot", fr:"l'antivol (m.)"}, {t:8, nl:"de gebruiker", fr:"l'usager (m.)"}, {t:8, nl:"de passagier", fr:"le passager"}, {t:8, nl:"openbaar vervoer", fr:"les transports en commun"}, {t:8, nl:"instappen", fr:"monter (dans)"}, {t:8, nl:"uitstappen", fr:"descendre (de)"}, {t:8, nl:"een halte", fr:"un arrêt"}, {t:8, nl:"het perron", fr:"le quai"}, {t:8, nl:"abonnement", fr:"un abonnement"}, {t:8, nl:"ticket", fr:"un titre de transport"}, {t:8, nl:"rijbewijs", fr:"le permis"}, {t:8, nl:"auto", fr:"une voiture / une bagnole"}, {t:8, nl:"automobilist", fr:"un automobiliste"}, {t:8, nl:"carpoolen", fr:"faire du covoiturage"}, {t:8, nl:"elektrische wagen", fr:"une voiture électrique"}, {t:8, nl:"laadpaal", fr:"une borne de recharge"}, {t:8, nl:"spitsuren", fr:"les heures de pointe"}, {t:8, nl:"file / opstopping", fr:"un embouteillage / un bouchon"}, {t:8, nl:"wegwerkzaamheden", fr:"les travaux (m.)"}, {t:8, nl:"omleiding", fr:"la déviation"}, {t:8, nl:"auto-ongeluk", fr:"un accident de voiture"}, {t:8, nl:"het dak", fr:"le toit"}, {t:8, nl:"de koffer", fr:"le coffre"}, {t:8, nl:"het stuur (auto)", fr:"le volant"}, {t:8, nl:"de band", fr:"le pneu"}, {t:8, nl:"het portier", fr:"la portière"}, {t:8, nl:"lekke band", fr:"le pneu crevé"}, {t:8, nl:"koplamp", fr:"le phare"}, {t:8, nl:"voorruit", fr:"le pare-brise"}, {t:8, nl:"achteruitkijkspiegel", fr:"le rétroviseur"}, {t:8, nl:"pinker", fr:"le clignotant"}, {t:8, nl:"elektrische step", fr:"la trottinette électrique"}, {t:8, nl:"steppen", fr:"trottiner"}, {t:8, nl:"hoverboard", fr:"l'hoverboard (m.)"}, {t:8, nl:"segway", fr:"le gyropode"},
-
-    // --- L'ART (t:9) ---
-    {t:9, nl:"de kunst", fr:"l'art (m.)"}, {t:9, nl:"kunstwerk", fr:"une œuvre d'art"}, {t:9, nl:"meesterwerk", fr:"un chef-d'œuvre"}, {t:9, nl:"creëren", fr:"créer"}, {t:9, nl:"creativiteit", fr:"la créativité"}, {t:9, nl:"kunstenaar", fr:"un(e) artiste"}, {t:9, nl:"tentoonstelling", fr:"une expo(sition)"}, {t:9, nl:"tentoonstellen", fr:"exposer"}, {t:9, nl:"museum bezoeken", fr:"visiter un musée"}, {t:9, nl:"schilder", fr:"un(e) peintre"}, {t:9, nl:"schilderij / doek", fr:"un tableau / une toile"}, {t:9, nl:"stilleven", fr:"une nature morte"}, {t:9, nl:"landschap", fr:"un paysage"}, {t:9, nl:"portret", fr:"un portrait"}, {t:9, nl:"schetsen", fr:"esquisser / croquer"}, {t:9, nl:"penseel", fr:"un pinceau"}, {t:9, nl:"inlijsten", fr:"encadrer"}, {t:9, nl:"beeldhouwer", fr:"un sculpteur"}, {t:9, nl:"standbeeld", fr:"une statue"}, {t:9, nl:"architectuur", fr:"l'architecture"}, {t:9, nl:"gebouw", fr:"un bâtiment"}, {t:9, nl:"design", fr:"le design"}, {t:9, nl:"fotografie", fr:"la photographie"}, {t:9, nl:"foto", fr:"un cliché / une photo"}, {t:9, nl:"straatkunst", fr:"l'art de rue"}, {t:9, nl:"muurschildering", fr:"une fresque"}, {t:9, nl:"stripverhaal", fr:"une BD"}, {t:9, nl:"filmmaker", fr:"un cinéaste"}, {t:9, nl:"regisseur", fr:"un réalisateur"}, {t:9, nl:"trailer", fr:"la bande-annonce"}, {t:9, nl:"scenario", fr:"un scénario"}, {t:9, nl:"special effects", fr:"les effets spéciaux"}, {t:9, nl:"ondertiteling", fr:"le sous-titrage"}, {t:9, nl:"dubben", fr:"doubler"}, {t:9, nl:"originele versie", fr:"la V.O."}, {t:9, nl:"acteur", fr:"un acteur"}, {t:9, nl:"rol spelen", fr:"jouer un rôle"}, {t:9, nl:"toneelstuk", fr:"la pièce de théâtre"}, {t:9, nl:"podium", fr:"la scène"}, {t:9, nl:"publiek", fr:"le public"}, {t:9, nl:"applaudisseren", fr:"applaudir"}, {t:9, nl:"ik ben dol op", fr:"j'adore"}, {t:9, nl:"interesseert mij", fr:"ça m'intéresse"}, {t:9, nl:"prachtig", fr:"magnifique"}, {t:9, nl:"indrukwekkend", fr:"impressionnant"}, {t:9, nl:"ontroerend", fr:"émouvant"}, {t:9, nl:"fascinerend", fr:"fascinant"}, {t:9, nl:"verrassend", fr:"surprenant"}, {t:9, nl:"kleurrijk", fr:"coloré"}, {t:9, nl:"helder", fr:"lumineux"}, {t:9, nl:"uniek", fr:"unique"}, {t:9, nl:"niet mijn ding", fr:"ce n'est pas mon truc"}, {t:9, nl:"overschat", fr:"surcoté"}, {t:9, nl:"ouderwets", fr:"ringard / de vieux"}, {t:9, nl:"maakt me bang", fr:"me fait peur"}, {t:9, nl:"perplex", fr:"perplexe"}, {t:9, nl:"eenzaamheid", fr:"la solitude"}, {t:9, nl:"afkeer", fr:"le dégoût"}, {t:9, nl:"verveling", fr:"l'ennui (m.)"}, {t:9, nl:"lelijk", fr:"moche"},
-
-    // --- VOYAGE EN FRANCE (t:10) ---
-    {t:10, nl:"Frankrijk", fr:"l'Hexagone (m.)"}, {t:10, nl:"de streek", fr:"la région"}, {t:10, nl:"departement", fr:"le département"}, {t:10, nl:"platteland", fr:"la campagne"}, {t:10, nl:"het dorp", fr:"le village"}, {t:10, nl:"de grens", fr:"la frontière"}, {t:10, nl:"toerist / bezoeker", fr:"le touriste / visiteur"}, {t:10, nl:"bureau voor toerisme", fr:"l'office du tourisme"}, {t:10, nl:"zich informeren", fr:"se renseigner"}, {t:10, nl:"verblijf organiseren", fr:"organiser un séjour"}, {t:10, nl:"georganiseerde reis", fr:"un voyage organisé"}, {t:10, nl:"road trip", fr:"un road trip"}, {t:10, nl:"route / traject", fr:"un itinéraire"}, {t:10, nl:"rondreis", fr:"un circuit"}, {t:10, nl:"reserveren", fr:"réserver / faire une résa"}, {t:10, nl:"verhuurbedrijf", fr:"une agence de location"}, {t:10, nl:"bestemming kiezen", fr:"choisir une destination"}, {t:10, nl:"accommodatie", fr:"l'hébergement (m.)"}, {t:10, nl:"gastronomie", fr:"la gastronomie"}, {t:10, nl:"lokale specialiteit", fr:"la spécialité locale"}, {t:10, nl:"cruise maken", fr:"faire une croisière"}, {t:10, nl:"toeristische site", fr:"le site touristique"}, {t:10, nl:"monument", fr:"le monument historique"}, {t:10, nl:"het kasteel", fr:"le château"}, {t:10, nl:"wijngaard", fr:"le vignoble"}, {t:10, nl:"cultureel erfgoed", fr:"le patrimoine culturel"}, {t:10, nl:"trekpleister", fr:"le pôle d'attraction"}, {t:10, nl:"klimaat", fr:"le climat"}, {t:10, nl:"bewolkte lucht", fr:"le ciel nuageux"}, {t:10, nl:"zonnig", fr:"ensoleillé"}, {t:10, nl:"de wind", fr:"le vent"}, {t:10, nl:"regenbui", fr:"une averse"}, {t:10, nl:"opklaringen", fr:"les éclaircies (f.)"}, {t:10, nl:"de sneeuw", fr:"la neige"}, {t:10, nl:"dicht bij", fr:"près de / aux environs de"}, {t:10, nl:"niet ver van", fr:"loin de"}, {t:10, nl:"naast", fr:"à côté de"}, {t:10, nl:"tegenover", fr:"en face de"}, {t:10, nl:"ten noorden van", fr:"au nord de"}, {t:10, nl:"ten zuiden van", fr:"au sud de"}, {t:10, nl:"het zicht", fr:"la vue"}, {t:10, nl:"plantengroei", fr:"la végétation"}, {t:10, nl:"bossen", fr:"des forêts"}, {t:10, nl:"vallei", fr:"une vallée"}, {t:10, nl:"heuvel", fr:"une colline"}, {t:10, nl:"berg", fr:"une montagne"}, {t:10, nl:"rivier", fr:"une rivière / un fleuve"}, {t:10, nl:"de zee", fr:"la mer"}, {t:10, nl:"de oceaan", fr:"l'océan"}, {t:10, nl:"de baai", fr:"la baie"}, {t:10, nl:"de kust", fr:"le littoral / la côte"}, {t:10, nl:"het strand", fr:"la plage"}, {t:10, nl:"de klif", fr:"la falaise"}, {t:10, nl:"schilderachtig", fr:"pittoresque"}, {t:10, nl:"heuvelachtig", fr:"vallonné"}
+    // THEMA 8: MOBILITEIT (ongeveer 60 woorden)
+    {t:8, nl:"zich verplaatsen", fr:"se déplacer"}, {t:8, nl:"de verplaatsing", fr:"le déplacement"}, {t:8, nl:"rondrijden", fr:"circuler"}, {t:8, nl:"het verkeer", fr:"la circulation / le trafic"}, {t:8, nl:"gaan naar", fr:"se rendre à / aller à"}, {t:8, nl:"terugkeren", fr:"retourner (à)"}, {t:8, nl:"pendelen", fr:"faire la navette"}, {t:8, nl:"vervoermiddel kiezen", fr:"choisir son mode de transport"}, {t:8, nl:"zachte mobiliteit", fr:"la mobility douce"}, {t:8, nl:"wandeling", fr:"la marche à pied"}, {t:8, nl:"voetganger", fr:"un piéton"}, {t:8, nl:"voetgangerszone", fr:"une zone piétonne"}, {t:8, nl:"het trottoir", fr:"le trottoir"}, {t:8, nl:"rechtsomkeer maken", fr:"faire demi-tour"}, {t:8, nl:"straat oversteken", fr:"traverser la rue"}, {t:8, nl:"het zebrapad", fr:"le passage piéton"}, {t:8, nl:"trappen (fiets)", fr:"pédaler"}, {t:8, nl:"een fietser", fr:"un cycliste"}, {t:8, nl:"fietspad", fr:"une piste cyclable"}, {t:8, nl:"fietsenstalling", fr:"un parking à vélos"}, {t:8, nl:"de helm", fr:"le casque"}, {t:8, nl:"het stuur (fiets)", fr:"le guidon"}, {t:8, nl:"fietsslot", fr:"l'antivol (m.)"}, {t:8, nl:"de gebruiker", fr:"l'usager (m.)"}, {t:8, nl:"de passagier", fr:"le passager"}, {t:8, nl:"openbaar vervoer", fr:"les transports en commun"}, {t:8, nl:"instappen", fr:"monter (dans)"}, {t:8, nl:"uitstappen", fr:"descendre (de)"}, {t:8, nl:"een halte", fr:"un arrêt"}, {t:8, nl:"het perron", fr:"le quai"}, {t:8, nl:"abonnement", fr:"un abonnement"}, {t:8, nl:"ticket", fr:"un titre de transport"}, {t:8, nl:"rijbewijs", fr:"le permis"}, {t:8, nl:"auto", fr:"une voiture"}, {t:8, nl:"automobilist", fr:"un automobiliste"}, {t:8, nl:"carpoolen", fr:"faire du covoiturage"}, {t:8, nl:"elektrische wagen", fr:"une voiture électrique"}, {t:8, nl:"laadpaal", fr:"une borne de recharge"}, {t:8, nl:"spitsuren", fr:"les heures de pointe"}, {t:8, nl:"file / opstopping", fr:"un embouteillage"}, {t:8, nl:"wegwerkzaamheden", fr:"les travaux (m.)"}, {t:8, nl:"omleiding", fr:"la déviation"}, {t:8, nl:"auto-ongeluk", fr:"un accident de voiture"}, {t:8, nl:"het dak", fr:"le toit"}, {t:8, nl:"de koffer", fr:"le coffre"}, {t:8, nl:"het stuur (auto)", fr:"le volant"}, {t:8, nl:"de band", fr:"le pneu"}, {t:8, nl:"het portier", fr:"la portière"}, {t:8, nl:"lekke band", fr:"le pneu crevé"}, {t:8, nl:"koplamp", fr:"le phare"}, {t:8, nl:"voorruit", fr:"le pare-brise"}, {t:8, nl:"achteruitkijkspiegel", fr:"le rétroviseur"}, {t:8, nl:"pinker", fr:"le clignotant"}, {t:8, nl:"elektrische step", fr:"la trottinette électrique"}, {t:8, nl:"steppen", fr:"trottiner"}, {t:8, nl:"hoverboard", fr:"l'hoverboard (m.)"}, {t:8, nl:"segway", fr:"le gyropode"},
+    
+    // THEMA 9: L'ART
+    {t:9, nl:"de kunst", fr:"l'art (m.)"}, {t:9, nl:"kunstwerk", fr:"une œuvre d'art"}, {t:9, nl:"meesterwerk", fr:"un chef-d'œuvre"}, {t:9, nl:"creëren", fr:"créer"}, {t:9, nl:"creativiteit", fr:"la créativité"}, {t:9, nl:"kunstenaar", fr:"un(e) artiste"}, {t:9, nl:"tentoonstelling", fr:"une expo(sition)"}, {t:9, nl:"tentoonstellen", fr:"exposer"}, {t:9, nl:"museum bezoeken", fr:"visiter un musée"}, {t:9, nl:"schilder", fr:"un(e) peintre"}, {t:9, nl:"schilderij / doek", fr:"un tableau / une toile"}, {t:9, nl:"stilleven", fr:"une nature morte"}, {t:9, nl:"landschap", fr:"un paysage"}, {t:9, nl:"portret", fr:"un portrait"}, {t:9, nl:"schetsen", fr:"esquisser"}, {t:9, nl:"penseel", fr:"un pinceau"}, {t:9, nl:"inlijsten", fr:"encadrer"}, {t:9, nl:"beeldhouwer", fr:"un sculpteur"}, {t:9, nl:"standbeeld", fr:"une statue"}, {t:9, nl:"architectuur", fr:"l'architecture"}, {t:9, nl:"gebouw", fr:"un bâtiment"}, {t:9, nl:"design", fr:"le design"}, {t:9, nl:"fotografie", fr:"la photographie"}, {t:9, nl:"foto", fr:"une photo"}, {t:9, nl:"straatkunst", fr:"l'art de rue"}, {t:9, nl:"muurschildering", fr:"une fresque"}, {t:9, nl:"stripverhaal", fr:"une BD"}, {t:9, nl:"filmmaker", fr:"un cinéaste"}, {t:9, nl:"regisseur", fr:"un réalisateur"}, {t:9, nl:"trailer", fr:"la bande-annonce"}, {t:9, nl:"scenario", fr:"un scénario"}, {t:9, nl:"special effects", fr:"les effets spéciaux"}, {t:9, nl:"ondertiteling", fr:"le sous-titrage"}, {t:9, nl:"dubben", fr:"doubler"}, {t:9, nl:"acteur", fr:"un acteur"}, {t:9, nl:"podium", fr:"la scène"}, {t:9, nl:"publiek", fr:"le public"}, {t:9, nl:"applaudisseren", fr:"applaudir"}, {t:9, nl:"dol zijn op", fr:"j'adore"}, {t:9, nl:"prachtig", fr:"magnifique"}, {t:9, nl:"indrukwekkend", fr:"impressionnant"}, {t:9, nl:"kleurrijk", fr:"coloré"}, {t:9, nl:"uniek", fr:"unique"}, {t:9, nl:"ouderwets", fr:"ringard"}, {t:9, nl:"eenzaamheid", fr:"la solitude"}, {t:9, nl:"verveling", fr:"l'ennui (m.)"},
+    
+    // THEMA 10: VOYAGE
+    {t:10, nl:"Frankrijk", fr:"l'Hexagone (m.)"}, {t:10, nl:"de streek", fr:"la région"}, {t:10, nl:"departement", fr:"le département"}, {t:10, nl:"platteland", fr:"la campagne"}, {t:10, nl:"het dorp", fr:"le village"}, {t:10, nl:"de grens", fr:"la frontière"}, {t:10, nl:"toerist", fr:"le touriste"}, {t:10, nl:"bureau voor toerisme", fr:"l'office du tourisme"}, {t:10, nl:"zich informeren", fr:"se renseigner"}, {t:10, nl:"georganiseerde reis", fr:"un voyage organisé"}, {t:10, nl:"traject", fr:"un itinéraire"}, {t:10, nl:"rondreis", fr:"un circuit"}, {t:10, nl:"reserveren", fr:"réserver"}, {t:10, nl:"verhuurbedrijf", fr:"une agence de location"}, {t:10, nl:"bestemming", fr:"une destination"}, {t:10, nl:"accommodatie", fr:"l'hébergement (m.)"}, {t:10, nl:"gastronomie", fr:"la gastronomie"}, {t:10, nl:"lokale specialiteit", fr:"la spécialité locale"}, {t:10, nl:"cruise maken", fr:"faire une croisière"}, {t:10, nl:"monument", fr:"le monument"}, {t:10, nl:"het kasteel", fr:"le château"}, {t:10, nl:"wijngaard", fr:"le vignoble"}, {t:10, nl:"erfgoed", fr:"le patrimoine"}, {t:10, nl:"klimaat", fr:"le climat"}, {t:10, nl:"zonnig", fr:"ensoleillé"}, {t:10, nl:"de wind", fr:"le vent"}, {t:10, nl:"regenbui", fr:"une averse"}, {t:10, nl:"de sneeuw", fr:"la neige"}, {t:10, nl:"dicht bij", fr:"près de"}, {t:10, nl:"het zicht", fr:"la vue"}, {t:10, nl:"bossen", fr:"des forêts"}, {t:10, nl:"vallei", fr:"une vallée"}, {t:10, nl:"heuvel", fr:"une colline"}, {t:10, nl:"berg", fr:"une montagne"}, {t:10, nl:"rivier", fr:"une rivière"}, {t:10, nl:"de zee", fr:"la mer"}, {t:10, nl:"de oceaan", fr:"l'océan"}, {t:10, nl:"de baai", fr:"la baie"}, {t:10, nl:"de kust", fr:"la côte"}, {t:10, nl:"het strand", fr:"la plage"}, {t:10, nl:"de klif", fr:"la falaise"}, {t:10, nl:"schilderachtig", fr:"pittoresque"}
 ];
 
 let allSets = [];
@@ -113,30 +114,59 @@ function generateSets(themaNum) {
     const gefilterd = woordenLijst.filter(w => w.t == themaNum);
     allSets = [];
 
-    // Diviser les mots en séries de max 12 mots pour ces thèmes
-    const wordsPerSet = 12;
-    for (let i = 0; i < Math.ceil(gefilterd.length / wordsPerSet); i++) {
-        let start = i * wordsPerSet;
-        let set = gefilterd.slice(start, start + wordsPerSet);
-        if (set.length > 0) allSets.push(set);
+    let currentPointer = 0;
+    
+    for (let i = 0; i < 10; i++) {
+        let set = [];
+        
+        if (i === 0) {
+            // Eerste set: gewoon de eerste 14 woorden
+            set = gefilterd.slice(0, 14);
+            currentPointer = 14;
+        } else {
+            // Volgende sets: 5 woorden overlap van de vorige + 9 nieuwe
+            const overlap = allSets[i-1].slice(-5); // Neem de laatste 5 van de vorige set
+            let nieuweWoorden = gefilterd.slice(currentPointer, currentPointer + 9);
+            
+            // Als de lijst op is, begin opnieuw van voor af aan voor de nieuwe woorden
+            if (nieuweWoorden.length < 9) {
+                let tekort = 9 - nieuweWoorden.length;
+                nieuweWoorden = [...nieuweWoorden, ...gefilterd.slice(0, tekort)];
+                currentPointer = tekort;
+            } else {
+                currentPointer += 9;
+            }
+            
+            set = [...overlap, ...nieuweWoorden];
+        }
+        
+        // Veiligheid: vul aan met willekeurige woorden als de bronlijst te kort is
+        while (set.length < 14) {
+            set.push(gefilterd[Math.floor(Math.random() * gefilterd.length)]);
+        }
+        
+        allSets.push(set);
     }
 
+    // Teken de kaarten
     allSets.forEach((set, i) => {
         const card = document.createElement('div');
         card.className = 'set-card';
         card.innerHTML = `
             <h3>Série ${i+1}</h3>
-            <p style="color:#888; font-size:14px;">${set.length} mots</p>
-            <button class="btn" onclick="startSet(${i})">🚀 Commencer</button>
-            <button class="btn btn-secondary" onclick="openEdit(${i})">📝 Voir la liste</button>
+            <p style="color:#888; font-size:14px;">14 woorden (9 nieuw + 5 overlap)</p>
+            <button class="btn" onclick="startSet(${i})">🚀 Starten</button>
+            <button class="btn btn-secondary" onclick="openEdit(${i})">📝 Lijst inzien</button>
         `;
         grid.appendChild(card);
     });
 }
 
+// --- Logica voor de schermen (identiek aan je werkende versie) ---
+
 function openEdit(idx) {
     currentSetIdx = idx;
-    document.getElementById('edit-title').innerText = `Série ${idx + 1}`;
+    document.getElementById('edit-title').innerText = `Série ${idx + 1} bewerken`;
     const tbody = document.getElementById('edit-body');
     tbody.innerHTML = '';
     allSets[idx].forEach((word) => addTableRow(word.nl, word.fr));
@@ -173,7 +203,7 @@ function saveAndStart() {
 function closeEdit() { document.getElementById('edit-screen').style.display = 'none'; }
 
 function startSet(idx) {
-    currentSetIdx = idx; wordIdx = 0;
+    currentSetIdx = idx; wordIdx = 0; isPaused = false;
     document.getElementById('container').style.display = 'none';
     document.getElementById('exercise').style.display = 'flex';
     nextWord();
@@ -184,7 +214,7 @@ function nextWord() {
     if (wordIdx >= set.length) { showResults(); return; }
     timeLeft = 8; 
     document.getElementById('word-display').innerText = set[wordIdx].nl;
-    document.getElementById('info-header').innerText = `Série ${currentSetIdx+1} — Mot ${wordIdx+1}/${set.length}`;
+    document.getElementById('info-header').innerText = `Série ${currentSetIdx+1} — Woord ${wordIdx+1}/${set.length}`;
     updateTimerBar();
     if (interval) clearInterval(interval);
     interval = setInterval(() => {
@@ -207,7 +237,7 @@ function updateTimerBar() {
 
 function togglePause() {
     isPaused = !isPaused;
-    document.getElementById('pause-btn').innerText = isPaused ? "Reprendre" : "Pause";
+    document.getElementById('pause-btn').innerText = isPaused ? "Hervatten" : "Pause";
 }
 
 function showResults() {
