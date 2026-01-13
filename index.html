@@ -104,7 +104,7 @@ const woordenLijst = [
 ];
 
 let allSets = [];
-let currentSetIdx = 0, wordIdx = 0, timeLeft = 8, isPaused = false, interval;
+let currentSetIdx = 0, wordIdx = 0, timeLeft = 10, isPaused = false, interval;
 
 function generateSets(themaNum) {
     const grid = document.getElementById('set-grid');
@@ -209,7 +209,7 @@ function nextWord() {
     const set = allSets[currentSetIdx];
     if (wordIdx >= set.length) { showResults(); return; }
     
-    timeLeft = 8; 
+    timeLeft = 10; 
     document.getElementById('word-display').innerText = set[wordIdx].nl;
     document.getElementById('info-header').innerText = `Série ${currentSetIdx+1} — Mot ${wordIdx+1}/${set.length}`;
     updateTimerBar();
@@ -229,7 +229,7 @@ function nextWord() {
 
 function updateTimerBar() {
     const bar = document.getElementById('timer-bar');
-    bar.style.width = (timeLeft / 8 * 100) + '%';
+    bar.style.width = (timeLeft / 10 * 100) + '%';
     bar.style.backgroundColor = timeLeft < 3 ? 'var(--danger)' : 'var(--success)';
 }
 
@@ -250,3 +250,4 @@ function showResults() {
 
 </body>
 </html>
+
