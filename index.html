@@ -106,8 +106,20 @@ let allSets = [];
 let currentSetIdx = 0, wordIdx = 0, timeLeft = 10, isPaused = false, interval;
 
 // RANDOMISER FUNCTIE
-function shuffle(array) {
-    return array.sort(() => Math.random() - 0.5);
+// VASTE SHUFFLE FUNCTIE (Seeded)
+function seededShuffle(array, seed) {
+    let m = array.length, t, i;
+    const random = () => {
+        var x = Math.sin(seed++) * 10000;
+        return x - Math.floor(x);
+    };
+    while (m) {
+        i = Math.floor(random() * m--);
+        t = array[m];
+        array[m] = array[i];
+        array[i] = t;
+    }
+    return array;
 }
 
 function generateSets(themaNum) {
@@ -119,23 +131,24 @@ function generateSets(themaNum) {
         allSets = JSON.parse(savedData);
     } else {
         const gefilterd = baseList.filter(w => w.t == themaNum);
-        allSets = [];
         
-        // We maken 10 sets met willekeurige woorden
+        // --- AANPASSING HIER ---
+        // We husselen de basislijst één keer met een vast getal (bijv. 123)
+        // Hierdoor is de volgorde "willekeurig" maar voor iedereen ALTIJD hetzelfde.
+        const vasteLijst = seededShuffle([...gefilterd], 123); 
+        
+        allSets = [];
         for (let i = 0; i < 10; i++) {
             let set = [];
-            if (i === 0) {
-                // Eerste set: gewoon 14 willekeurige woorden uit de lijst
-                set = shuffle([...gefilterd]).slice(0, 14);
-            } else {
-                // Volgende sets: 5 uit de vorige set + 9 nieuwe willekeurige
-                const overlap = shuffle([...allSets[i-1]]).slice(0, 5);
-                const restLijst = gefilterd.filter(w => !overlap.includes(w));
-                const nieuwe9 = shuffle(restLijst).slice(0, 9);
-                set = [...overlap, ...nieuwe9];
+            // We pakken simpelweg opeenvolgende blokken van 14 woorden
+            // i=0 -> woorden 0-13, i=1 -> woorden 14-27, etc.
+            for (let j = 0; j < 14; j++) {
+                let index = (i * 14 + j) % vasteLijst.length; // Gebruik modulo om rond te gaan
+                set.push(vasteLijst[index]);
             }
             allSets.push(set);
         }
+        // -----------------------
     }
     renderGrid();
 }
@@ -275,3 +288,4 @@ function showResults() {
 </script>
 </body>
 </html>
+
